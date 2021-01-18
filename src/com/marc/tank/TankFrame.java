@@ -74,5 +74,6 @@ public class TankFrame extends Frame {
         g.fillRect(x,y,200,200);
         x = x<=990? x+10:0;
         y = y<=990? y+10:0;
+        System.out.println("hi");
     }
 }
