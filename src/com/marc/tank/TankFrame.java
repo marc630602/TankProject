@@ -7,9 +7,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class TankFrame extends Frame {
-    int x = 500, y = 500;
-    private static final int move = 10;
-    Direction dir = Direction.DOWN;
+    Tank myTank = new Tank(500,500,Direction.DOWN);
+    Bullet bullet = new Bullet(550,550,Direction.DOWN);
     public TankFrame() throws HeadlessException {
         //创建窗口
         this.setSize(1000,1000);
@@ -45,14 +44,7 @@ public class TankFrame extends Frame {
                         break;
                     default:break;
                 }
-            setMainTankDirection();
-            }
-
-            private void setMainTankDirection() {
-                if (bR) dir = Direction.RIGHT;
-                if (bL) dir = Direction.LEFT;
-                if (bU) dir = Direction.UP;
-                if (bD) dir = Direction.DOWN;
+                setMainTankDirection();
             }
 
             @Override
@@ -73,6 +65,19 @@ public class TankFrame extends Frame {
                         break;
                     default:break;
                 }
+                setMainTankDirection();
+            }
+
+            private void setMainTankDirection() {
+                if(!bL && !bU && !bR && !bD) {
+                    myTank.setMoving(false);
+                } else {
+                    myTank.setMoving(true);
+                    if (bR) myTank.setDir(Direction.RIGHT);
+                    if (bL) myTank.setDir(Direction.LEFT);
+                    if (bU) myTank.setDir(Direction.UP);
+                    if (bD) myTank.setDir(Direction.DOWN);
+                }
             }
         });
     }
@@ -80,22 +85,7 @@ public class TankFrame extends Frame {
     //窗口被改变时候调用的方法
     @Override
     public void paint(Graphics g) {
-        g.fillRect(x,y,50,50);
-        switch (dir){
-            case LEFT:
-                x -= move;
-                break;
-            case RIGHT:
-                x += move;
-                break;
-            case DOWN:
-                y += move;
-                break;
-            case UP:
-                y -= move;
-                break;
-            default:
-                break;
-        }
+        myTank.paint(g);
+        bullet.paint(g);
     }
 }
