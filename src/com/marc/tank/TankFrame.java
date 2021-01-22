@@ -7,8 +7,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class TankFrame extends Frame {
-    int x = 0, y = 0;
-    int move = 10;
+    int x = 500, y = 500;
+    private static final int move = 10;
+    Direction dir = Direction.DOWN;
     public TankFrame() throws HeadlessException {
         //创建窗口
         this.setSize(1000,1000);
@@ -44,6 +45,14 @@ public class TankFrame extends Frame {
                         break;
                     default:break;
                 }
+            setMainTankDirection();
+            }
+
+            private void setMainTankDirection() {
+                if (bR) dir = Direction.RIGHT;
+                if (bL) dir = Direction.LEFT;
+                if (bU) dir = Direction.UP;
+                if (bD) dir = Direction.DOWN;
             }
 
             @Override
@@ -71,9 +80,22 @@ public class TankFrame extends Frame {
     //窗口被改变时候调用的方法
     @Override
     public void paint(Graphics g) {
-        g.fillRect(x,y,200,200);
-        x = x<=990? x+10:0;
-        y = y<=990? y+10:0;
-        System.out.println("hi");
+        g.fillRect(x,y,50,50);
+        switch (dir){
+            case LEFT:
+                x -= move;
+                break;
+            case RIGHT:
+                x += move;
+                break;
+            case DOWN:
+                y += move;
+                break;
+            case UP:
+                y -= move;
+                break;
+            default:
+                break;
+        }
     }
 }
