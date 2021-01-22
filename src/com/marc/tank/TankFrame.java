@@ -7,11 +7,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class TankFrame extends Frame {
-    Tank myTank = new Tank(500,500,Direction.DOWN);
+    Tank myTank = new Tank(500,500,Direction.DOWN,this);
     Bullet bullet = new Bullet(550,550,Direction.DOWN);
+    static final int GAME_SIZE_WIDTH = 1000, GAME_SIZE_HEIGHT = 1000;
+
+    public Bullet getBullet() {
+        return bullet;
+    }
+
+    public void setBullet(Bullet bullet) {
+        this.bullet = bullet;
+    }
+
     public TankFrame() throws HeadlessException {
         //创建窗口
-        this.setSize(1000,1000);
+        this.setSize(GAME_SIZE_WIDTH,GAME_SIZE_HEIGHT);
         this.setResizable(false);
         this.setVisible(true);
         this.setTitle("好玩的坦克大战");
@@ -63,6 +73,9 @@ public class TankFrame extends Frame {
                     case KeyEvent.VK_DOWN :
                         bD = false;
                         break;
+                    case KeyEvent.VK_SPACE:
+                        myTank.fire();
+                        break;
                     default:break;
                 }
                 setMainTankDirection();
@@ -80,6 +93,22 @@ public class TankFrame extends Frame {
                 }
             }
         });
+    }
+    //双缓冲解决闪烁
+    Image offScreenImage = null;
+
+    @Override
+    public void update(Graphics g) {
+        if (offScreenImage== null){
+            offScreenImage = this.createImage(GAME_SIZE_WIDTH,GAME_SIZE_HEIGHT);
+        }
+        Graphics graphics = offScreenImage.getGraphics();
+        Color c = graphics.getColor();
+        graphics.setColor(Color.GRAY);
+        graphics.fillRect(0,0,GAME_SIZE_WIDTH,GAME_SIZE_HEIGHT);
+        graphics.setColor(c);
+        paint(graphics);
+        g.drawImage(offScreenImage,0,0,null);
     }
 
     //窗口被改变时候调用的方法
