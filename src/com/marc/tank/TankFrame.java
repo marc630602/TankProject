@@ -49,8 +49,8 @@ public class TankFrame extends Frame {
                     case KeyEvent.VK_DOWN :
                         bD = true;
                         break;
-//                    case KeyEvent.VK_SPACE:
-//                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT),Direction.DOWN,new TankFrame()));
+                    case KeyEvent.VK_A:
+                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT),Direction.DOWN,TankFrame.this));
                     default:break;
                 }
                 setMainTankDirection();
@@ -113,12 +113,24 @@ public class TankFrame extends Frame {
     //窗口被改变时候调用的方法
     @Override
     public void paint(Graphics g) {
+        Color c = g.getColor();
+        g.setColor(Color.WHITE);
+        g.drawString("子弹数量：" +bulletList.size(),10,50);
+        g.drawString("敌机数量："+enemyTanks.size(),10,100);
+        g.setColor(c);
         myTank.paint(g);
         for (int i = 0;i<bulletList.size();i++){
             bulletList.get(i).paint(g);
         }
-        for (int j =0;j<enemyTanks.size();j++){
+
+        for (int j = 0;j<enemyTanks.size();j++){
             enemyTanks.get(j).paint(g);
+        }
+
+        for (int i=0;i<bulletList.size();i++){
+            for (int j=0;j<enemyTanks.size();j++){
+                bulletList.get(i).colliedWith(enemyTanks.get(j));
+            }
         }
     }
 }
