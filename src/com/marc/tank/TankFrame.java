@@ -1,6 +1,7 @@
 package com.marc.tank;
 
 import java.awt.*;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -10,11 +11,15 @@ import java.util.List;
 import java.util.Random;
 
 public class TankFrame extends Frame {
+    public static final TankFrame INSTANCE = new TankFrame();
+    static final int GAME_SIZE_WIDTH = 1000, GAME_SIZE_HEIGHT = 1000;
+
+    Random random = new Random();
+
     Tank myTank = new Tank(500,500,Direction.DOWN,Group.GOOD,this);
     List<Bullet> bulletList = new ArrayList<>();
     List<Tank> enemyTanks = new ArrayList<>();
-    static final int GAME_SIZE_WIDTH = 1000, GAME_SIZE_HEIGHT = 1000;
-    Random random = new Random();
+    List<Explode> explodes = new ArrayList<>();
 
     public TankFrame() throws HeadlessException {
         //创建窗口
@@ -50,7 +55,7 @@ public class TankFrame extends Frame {
                         bD = true;
                         break;
                     case KeyEvent.VK_A:
-                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT),Direction.DOWN,Group.BAD,TankFrame.this));
+                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH-Tank.TANK_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT-Tank.TANK_SIZE_HEIGHT),Direction.DOWN,Group.BAD,TankFrame.this));
                     default:break;
                 }
                 setMainTankDirection();
@@ -131,6 +136,11 @@ public class TankFrame extends Frame {
             for (int j=0;j<enemyTanks.size();j++){
                 bulletList.get(i).colliedWith(enemyTanks.get(j));
             }
+        }
+
+        for (Explode explode : explodes) {
+            explode.paint(g);
+
         }
     }
 }
