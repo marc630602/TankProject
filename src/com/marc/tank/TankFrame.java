@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class TankFrame extends Frame {
-    Tank myTank = new Tank(500,500,Direction.DOWN,this);
+    Tank myTank = new Tank(500,500,Direction.DOWN,Group.GOOD,this);
     List<Bullet> bulletList = new ArrayList<>();
     List<Tank> enemyTanks = new ArrayList<>();
     static final int GAME_SIZE_WIDTH = 1000, GAME_SIZE_HEIGHT = 1000;
@@ -50,7 +50,7 @@ public class TankFrame extends Frame {
                         bD = true;
                         break;
                     case KeyEvent.VK_A:
-                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT),Direction.DOWN,TankFrame.this));
+                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT),Direction.DOWN,Group.BAD,TankFrame.this));
                     default:break;
                 }
                 setMainTankDirection();
@@ -119,12 +119,12 @@ public class TankFrame extends Frame {
         g.drawString("敌机数量："+enemyTanks.size(),10,100);
         g.setColor(c);
         myTank.paint(g);
-        for (int i = 0;i<bulletList.size();i++){
-            bulletList.get(i).paint(g);
+        for (Bullet bullet : bulletList) {
+            bullet.paint(g);
         }
 
-        for (int j = 0;j<enemyTanks.size();j++){
-            enemyTanks.get(j).paint(g);
+        for (Tank enemyTank : enemyTanks) {
+            enemyTank.paint(g);
         }
 
         for (int i=0;i<bulletList.size();i++){

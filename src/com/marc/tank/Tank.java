@@ -1,6 +1,7 @@
 package com.marc.tank;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Tank {
     private int x,y;
@@ -10,6 +11,8 @@ public class Tank {
     private TankFrame tf = null;
     private boolean moving = false;
     private boolean living = true;
+    private Random random = new Random();
+    private Group group = Group.BAD;
 
     public boolean isMoving() {
         return moving;
@@ -17,6 +20,14 @@ public class Tank {
 
     public void setMoving(boolean moving) {
         this.moving = moving;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public int getX() {
@@ -35,11 +46,12 @@ public class Tank {
         this.y = y;
     }
 
-    public Tank(int x, int y, Direction dir,TankFrame tf) {
+    public Tank(int x, int y, Direction dir, Group group, TankFrame tf) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.tf = tf;
+        this.group = group;
     }
 
     public void paint(Graphics g) {
@@ -79,7 +91,7 @@ public class Tank {
                 break;
             default: break;
         }
-
+        if (random.nextInt(10)>8) fire();
     }
 
     public Direction getDir() {
@@ -93,7 +105,7 @@ public class Tank {
     public void fire() {
         int bx = this.x + TANK_SIZE_WIDTH/2 - Bullet.WIDTH/2;
         int by = this.y + TANK_SIZE_HEIGHT/2 - Bullet.HEIGTH/2;
-        tf.bulletList.add(new Bullet(bx,by,this.dir,tf));
+        tf.bulletList.add(new Bullet(bx,by,this.dir,this.group,tf));
     }
 
     public void die() {
