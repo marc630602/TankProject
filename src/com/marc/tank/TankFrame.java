@@ -132,15 +132,14 @@ public class TankFrame extends Frame {
             enemyTank.paint(g);
         }
 
+        for (Explode explode : explodes) {
+            explode.paint(g);
+        }
+
         for (int i=0;i<bulletList.size();i++){
             for (int j=0;j<enemyTanks.size();j++){
                 bulletList.get(i).colliedWith(enemyTanks.get(j));
             }
-        }
-
-        for (Explode explode : explodes) {
-            explode.paint(g);
-
         }
     }
 }

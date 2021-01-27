@@ -4,16 +4,40 @@ import java.awt.*;
 import java.util.Random;
 
 public class Tank {
-    private int x,y;
-    private Direction dir = Direction.DOWN;
+
     private static final int move = 10;
     public static final int TANK_SIZE_WIDTH=ResourceMgr.badTankL.getWidth(),TANK_SIZE_HEIGHT=ResourceMgr.badTankL.getHeight();
-    private TankFrame tf = null;
-    private boolean moving = false;
+
+    private int x,y;
+    private Direction dir = Direction.DOWN;
+    private boolean moving = true;
     private boolean living = true;
-    private Random random = new Random();
     private Group group = Group.BAD;
-    private Explode explode = null;
+
+    private TankFrame tf = null;
+    private Random random = new Random();
+    Rectangle rect = new Rectangle();
+
+    public Tank(int x, int y, Direction dir, Group group, TankFrame tf) {
+        this.x = x;
+        this.y = y;
+        this.dir = dir;
+        this.tf = tf;
+        this.group = group;
+
+        rect.x = this.x;
+        rect.y = this.y;
+        rect.width = TANK_SIZE_WIDTH;
+        rect.height = TANK_SIZE_HEIGHT;
+    }
+
+    public boolean isLiving() {
+        return living;
+    }
+
+    public void setLiving(boolean living) {
+        this.living = living;
+    }
 
     public boolean isMoving() {
         return moving;
@@ -47,53 +71,33 @@ public class Tank {
         this.y = y;
     }
 
-    public Tank(int x, int y, Direction dir, Group group, TankFrame tf) {
-        this.x = x;
-        this.y = y;
+    public Direction getDir() {
+        return dir;
+    }
+
+    public void setDir(Direction dir) {
         this.dir = dir;
-        this.tf = tf;
-        this.group = group;
     }
 
     public void paint(Graphics g) {
         if (!living) {
             tf.enemyTanks.remove(this);
-            explode.paint(g);
         }
-        if (group == Group.GOOD){
-            switch (dir){
-                case DOWN:
-                    g.drawImage(ResourceMgr.goodTtankD,x,y,null);
-                    break;
-                case UP:
-                    g.drawImage(ResourceMgr.goodTtankU,x,y,null);
-                    break;
-                case LEFT:
-                    g.drawImage(ResourceMgr.goodTtankL,x,y,null);
-                    break;
-                case RIGHT:
-                    g.drawImage(ResourceMgr.goodTtankR,x,y,null);
-                    break;
-                default:break;
+        switch (dir){
+            case DOWN:
+                g.drawImage(group==Group.GOOD?ResourceMgr.goodTtankD:ResourceMgr.badTankD,x,y,null);
+                break;
+            case UP:
+                g.drawImage(group==Group.GOOD?ResourceMgr.goodTtankU:ResourceMgr.badTankU,x,y,null);
+                break;
+            case LEFT:
+                g.drawImage(group==Group.GOOD?ResourceMgr.goodTtankL:ResourceMgr.badTankL,x,y,null);
+                break;
+            case RIGHT:
+                g.drawImage(group==Group.GOOD?ResourceMgr.goodTtankR:ResourceMgr.badTankR,x,y,null);
+                break;
+            default:break;
             }
-        } else if (group == Group.BAD){
-            switch (dir){
-                case DOWN:
-                    g.drawImage(ResourceMgr.badTankD,x,y,null);
-                    break;
-                case UP:
-                    g.drawImage(ResourceMgr.badTankU,x,y,null);
-                    break;
-                case LEFT:
-                    g.drawImage(ResourceMgr.badTankL,x,y,null);
-                    break;
-                case RIGHT:
-                    g.drawImage(ResourceMgr.badTankR,x,y,null);
-                    break;
-                default:break;
-            }
-        }
-
         move();
     }
 
@@ -117,6 +121,9 @@ public class Tank {
         boundCheck();
         if (this.group==Group.BAD && random.nextInt(10) > 7) this.fire();
         if (this.group==Group.BAD && random.nextInt(10) > 7) randomDir();
+
+        rect.x = this.x;
+        rect.y = this.y;
     }
 
     private void boundCheck() {
@@ -130,14 +137,6 @@ public class Tank {
         this.dir = Direction.values()[random.nextInt(4)];
     }
 
-    public Direction getDir() {
-        return dir;
-    }
-
-    public void setDir(Direction dir) {
-        this.dir = dir;
-    }
-
     public void fire() {
         int bx = this.x + TANK_SIZE_WIDTH/2 - Bullet.WIDTH/2;
         int by = this.y + TANK_SIZE_HEIGHT/2 - Bullet.HEIGTH/2;
@@ -146,6 +145,10 @@ public class Tank {
 
     public void die() {
         this.living = false;
+        explode();
+    }
+
+    private void explode() {
         int ex = this.x + TANK_SIZE_WIDTH/2 - Explode.WIDTH/2;
         int ey = this.y + TANK_SIZE_HEIGHT/2 - Explode.HEIGTH/2;
         tf.explodes.add(new Explode(ex,ey,tf));
