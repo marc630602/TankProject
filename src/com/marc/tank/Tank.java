@@ -5,8 +5,9 @@ import java.util.Random;
 
 public class Tank {
 
-    private static final int move = 10;
-    public static final int TANK_SIZE_WIDTH=ResourceMgr.badTankL.getWidth(),TANK_SIZE_HEIGHT=ResourceMgr.badTankL.getHeight();
+    private static final int move = PropertiesMgr.getInt("tankSpeed");;
+    public static final int tankSizeWidth = ResourceMgr.badTankL.getWidth();
+    public static final int tankSizeHeight = ResourceMgr.badTankL.getHeight();
 
     private int x,y;
     private Direction dir = Direction.DOWN;
@@ -17,8 +18,9 @@ public class Tank {
     private TankFrame tf = null;
     private Random random = new Random();
     Rectangle rect = new Rectangle();
+    FireStrategy fs;
 
-    public Tank(int x, int y, Direction dir, Group group, TankFrame tf) {
+    public Tank(int x, int y, Direction dir, Group group, TankFrame tf)  {
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -27,8 +29,23 @@ public class Tank {
 
         rect.x = this.x;
         rect.y = this.y;
-        rect.width = TANK_SIZE_WIDTH;
-        rect.height = TANK_SIZE_HEIGHT;
+        rect.width = tankSizeWidth;
+        rect.height = tankSizeHeight;
+
+        if (group == Group.GOOD){
+            String goodFS = PropertiesMgr.getString("goodFS");
+            try {
+                fs = (FireStrategy) Class.forName(goodFS).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else if (group == Group.BAD){
+            fs = new DefaultFireStrategy();
+        }
     }
 
     public boolean isLiving() {
@@ -54,6 +71,8 @@ public class Tank {
     public void setGroup(Group group) {
         this.group = group;
     }
+
+    public TankFrame getTf() { return tf; }
 
     public int getX() {
         return x;
@@ -128,9 +147,9 @@ public class Tank {
 
     private void boundCheck() {
         if (x<0) x = 0;
-        if (x+TANK_SIZE_WIDTH>TankFrame.GAME_SIZE_WIDTH) x = TankFrame.GAME_SIZE_WIDTH-TANK_SIZE_WIDTH;
+        if (x+ tankSizeWidth >TankFrame.gameSizeWidth) x = TankFrame.gameSizeWidth - tankSizeWidth;
         if (y<0) y = 0;
-        if (y+TANK_SIZE_HEIGHT>TankFrame.GAME_SIZE_HEIGHT) y = TankFrame.GAME_SIZE_HEIGHT-TANK_SIZE_HEIGHT;
+        if (y+ tankSizeHeight >TankFrame.gameSizeHeight) y = TankFrame.gameSizeHeight - tankSizeHeight;
     }
 
     private void randomDir() {
@@ -138,9 +157,7 @@ public class Tank {
     }
 
     public void fire() {
-        int bx = this.x + TANK_SIZE_WIDTH/2 - Bullet.WIDTH/2;
-        int by = this.y + TANK_SIZE_HEIGHT/2 - Bullet.HEIGTH/2;
-        tf.bulletList.add(new Bullet(bx,by,this.dir,this.group,tf));
+        fs.fire(this);
     }
 
     public void die() {
@@ -149,8 +166,8 @@ public class Tank {
     }
 
     private void explode() {
-        int ex = this.x + TANK_SIZE_WIDTH/2 - Explode.WIDTH/2;
-        int ey = this.y + TANK_SIZE_HEIGHT/2 - Explode.HEIGTH/2;
+        int ex = this.x + tankSizeWidth /2 - Explode.WIDTH/2;
+        int ey = this.y + tankSizeHeight /2 - Explode.HEIGTH/2;
         tf.explodes.add(new Explode(ex,ey,tf));
     }
 }

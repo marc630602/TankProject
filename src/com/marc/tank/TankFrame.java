@@ -11,19 +11,19 @@ import java.util.List;
 import java.util.Random;
 
 public class TankFrame extends Frame {
-    public static final TankFrame INSTANCE = new TankFrame();
-    static final int GAME_SIZE_WIDTH = 1000, GAME_SIZE_HEIGHT = 1000;
+    static final int gameSizeWidth = PropertiesMgr.getInt("gameSizeWidth");
+    static final int gameSizeHeight = PropertiesMgr.getInt("gameSizeHeight");
 
     Random random = new Random();
 
-    Tank myTank = new Tank(500,500,Direction.DOWN,Group.GOOD,this);
+    Tank myTank = new Tank(random.nextInt(gameSizeWidth -Tank.tankSizeWidth), random.nextInt(gameSizeHeight -Tank.tankSizeHeight),Direction.DOWN,Group.GOOD,this);
     List<Bullet> bulletList = new ArrayList<>();
     List<Tank> enemyTanks = new ArrayList<>();
     List<Explode> explodes = new ArrayList<>();
 
     public TankFrame() throws HeadlessException {
         //创建窗口
-        this.setSize(GAME_SIZE_WIDTH,GAME_SIZE_HEIGHT);
+        this.setSize(gameSizeWidth, gameSizeHeight);
         this.setResizable(false);
         this.setVisible(true);
         this.setTitle("好玩的坦克大战");
@@ -55,7 +55,7 @@ public class TankFrame extends Frame {
                         bD = true;
                         break;
                     case KeyEvent.VK_A:
-                        enemyTanks.add(new Tank(random.nextInt(GAME_SIZE_WIDTH-Tank.TANK_SIZE_WIDTH),random.nextInt(GAME_SIZE_HEIGHT-Tank.TANK_SIZE_HEIGHT),Direction.DOWN,Group.BAD,TankFrame.this));
+                        enemyTanks.add(new Tank(random.nextInt(gameSizeWidth -Tank.tankSizeWidth),random.nextInt(gameSizeHeight -Tank.tankSizeHeight),Direction.DOWN,Group.BAD,TankFrame.this));
                     default:break;
                 }
                 setMainTankDirection();
@@ -104,12 +104,12 @@ public class TankFrame extends Frame {
     @Override
     public void update(Graphics g) {
         if (offScreenImage== null){
-            offScreenImage = this.createImage(GAME_SIZE_WIDTH,GAME_SIZE_HEIGHT);
+            offScreenImage = this.createImage(gameSizeWidth, gameSizeHeight);
         }
         Graphics graphics = offScreenImage.getGraphics();
         Color c = graphics.getColor();
         graphics.setColor(Color.BLACK);
-        graphics.fillRect(0,0,GAME_SIZE_WIDTH,GAME_SIZE_HEIGHT);
+        graphics.fillRect(0,0, gameSizeWidth, gameSizeHeight);
         graphics.setColor(c);
         paint(graphics);
         g.drawImage(offScreenImage,0,0,null);
